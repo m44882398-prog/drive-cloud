@@ -1,0 +1,17 @@
+appId: com.cloud-drive.windows
+productName: Cloud Drive
+directories:
+  output: dist
+files:
+  - dist/**/*
+  - package.json
+win:
+  target:
+    - nsis
+  icon: resources/icon.ico
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  installerIcon: resources/icon.ico
+  uninstallDisplayName: Cloud Drive

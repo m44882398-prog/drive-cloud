@@ -1,0 +1,13 @@
+node_modules
+.next
+out
+coverage
+npm-debug.log*
+.vite
+.env.local
+.env
+*.log
+.DS_Store
+desktop/dist
+desktop/out
+desktop/node_modules

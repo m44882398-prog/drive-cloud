@@ -1,0 +1,20 @@
+{
+  "name": "cloud-drive-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/main/index.js",
+  "scripts": {
+    "dev": "tsc -p tsconfig.json && electron .",
+    "build": "tsc -p tsconfig.json && electron-builder",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.5.1",
+    "electron": "^31.4.0",
+    "electron-builder": "^24.14.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}
