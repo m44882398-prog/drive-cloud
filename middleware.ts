@@ -1,28 +1,60 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { createServerClient } from '@supabase/ssr'
+import { NextResponse, type NextRequest } from 'next/server'
 
-const PUBLIC_PATHS = ['/', '/login', '/forgot-password', '/share'];
+export async function middleware(request: NextRequest) {
+  let supabaseResponse = NextResponse.next({ request })
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  const isPublicPath = PUBLIC_PATHS.some((path) => pathname === path || pathname.startsWith('/share'));
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_BASE_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_BASE_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll()
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value)
+          )
+          supabaseResponse = NextResponse.next({ request })
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          )
+        },
+      },
+    }
+  )
 
-  const hasSession =
-    !!request.cookies.get('sb-access-token')?.value ||
-    !!request.cookies.get('supabase-auth-token')?.value ||
-    !!request.cookies.get('sb-refresh-token')?.value;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  if (!isPublicPath && !hasSession) {
-    return NextResponse.redirect(new URL('/login', request.url));
+  const { pathname } = request.nextUrl
+  const isPublicPath =
+    pathname === '/' ||
+    pathname === '/login' ||
+    pathname === '/forgot-password' ||
+    pathname.startsWith('/share')
+
+  // Belum login & akses halaman protected → redirect ke /login
+  if (!user && !isPublicPath) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/login'
+    return NextResponse.redirect(url)
   }
 
-  if (pathname === '/login' && hasSession) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+  // Sudah login & akses /login → redirect ke /dashboard
+  if (user && pathname === '/login') {
+    const url = request.nextUrl.clone()
+    url.pathname = '/dashboard'
+    return NextResponse.redirect(url)
   }
 
-  return NextResponse.next();
+  return supabaseResponse
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
-};
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
+}
