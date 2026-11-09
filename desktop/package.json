@@ -1,0 +1,34 @@
+{
+  "name": "cloud-drive-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Windows desktop client for Cloud Drive",
+  "author": "m44882398-prog",
+  "main": "build/main/index.js",
+  "scripts": {
+    "dev": "concurrently -k \"vite --config vite.config.ts --host 127.0.0.1\" \"tsc -p tsconfig.json --watch\" \"wait-on tcp:5173 build/main/index.js && cross-env DESKTOP_RENDERER_URL=http://127.0.0.1:5173 electron .\"",
+    "build": "tsc -p tsconfig.json && vite build --config vite.config.ts && electron-builder",
+    "pack": "tsc -p tsconfig.json && vite build --config vite.config.ts && electron-builder --dir",
+    "dist": "pnpm build",
+    "upload:installer": "tsx scripts/upload-installer.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.5.1",
+    "electron-store": "^6.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "electron-updater": "^6.3.9"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "concurrently": "^9.0.1",
+    "cross-env": "^7.0.3",
+    "electron": "^31.4.0",
+    "electron-builder": "^26.18.0",
+    "tsx": "^4.16.0",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.8",
+    "wait-on": "^8.0.1"
+  }
+}

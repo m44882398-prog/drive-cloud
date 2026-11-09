@@ -1,0 +1,11 @@
+alter table public.projects enable row level security;
+alter table public.folders enable row level security;
+alter table public.files enable row level security;
+alter table public.shared_links enable row level security;
+alter table public.activity_logs enable row level security;
+create policy "Own projects" on public.projects for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+create policy "Own project folders" on public.folders for all using (exists (select 1 from public.projects p where p.id = project_id and p.user_id = auth.uid())) with check (exists (select 1 from public.projects p where p.id = project_id and p.user_id = auth.uid()));
+create policy "Own project files" on public.files for all using (exists (select 1 from public.projects p where p.id = project_id and p.user_id = auth.uid())) with check (exists (select 1 from public.projects p where p.id = project_id and p.user_id = auth.uid()));
+create policy "Public shared links" on public.shared_links for select using (true);
+create policy "Own shared links" on public.shared_links for insert with check (auth.uid() = created_by);
+create policy "Own activity" on public.activity_logs for all using (auth.uid() = user_id) with check (auth.uid() = user_id);

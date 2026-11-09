@@ -1,0 +1,9 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "pnpm build",
+  "installCommand": "pnpm install",
+  "regions": ["sin1"],
+  "crons": [
+    { "path": "/api/keep-alive", "schedule": "0 0 * * *" }
+  ]
+}

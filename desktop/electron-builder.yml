@@ -1,0 +1,19 @@
+appId: com.cloud-drive.windows
+productName: Cloud Drive
+directories:
+  output: release
+files:
+  - build/**/*
+  - package.json
+win:
+  target:
+    - nsis
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  uninstallDisplayName: Cloud Drive
+publish:
+  provider: github
+  owner: m44882398-prog
+  repo: drive-cloud
